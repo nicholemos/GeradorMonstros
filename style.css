@@ -1,0 +1,15 @@
+
+		label {
+			display: inline-block;
+			margin-bottom: 5px;
+		}
+		hr {
+			border: 0;
+			height: 1px;
+			background-color: #ccc;
+			margin: 10px 0;
+		}
+        #subtipo {
+          width: 100px;
+        }
+	
