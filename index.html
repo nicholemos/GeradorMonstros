@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Gerador de Mobs</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+ <style>
+  #image-container img {
+    max-width: 100%;
+    max-height: 200px;
+}
+  @font-face {
+  font-family: 'Tormenta';
+  src: url('Tormenta.ttf') format('truetype');
+}
+hr {
+  border-top: 3px solid red;
+  font-weight: bold;
+}
+
+.modal-content {
+  padding: 5px;
+}
+
+.modal-header, .modal-body, .modal-footer {
+  padding: 5px;
+}
+
+</style> 
+ 
+</head>
+<body>
+<div class="container">
+  <h2>Gerador de Mobs</h2>
+  
+  <form>
+		<label for="nome">Nome: </label>
+		<input type="text" id="nome" name="nome" value="">
+		<label for="nd">ND: </label>
+        <select id="nd" name="nd">
+            <option value="">Selecione um ND</option>
+            <option value="1">ND 1</option>
+            <option value="20">ND 20</option>
+        </select>
+        <label for="nd2">Tipo: </label>
+          <select id="nd2" name="nd2">
+            <option value="Lacaio">Lacaio</option>
+            <option value="Solo">Solo</option>
+            <option value="Especial">Especial</option>
+          </select>
+		<hr>
+		<textarea type="text" id="textopersonagem" name="textopersonagem" size="65" placeholder="insira a descrição da criatura" rows="2" style="width: 400px;"></textarea>
+		<br>
+		<select id="criaturatipo" name="criaturatipo">
+        	<option value="default"></option>
+			<option value="Humanoide">Humanoide</option>
+			<option value="Animal">Animal</option>
+			<option value="Monstro">Monstro</option>
+			<option value="Morto-Vivo">Morto-vivo</option>
+			<option value="Construto">Construto</option>
+			<option value="Espirito">Espírito</option>
+		</select>
+		<input type="text" id="subtipo" name="subtipo" value="" rows="2" style="width: 150px;">
+		<select id="tamanho" name="tamanho">
+			<option value="default"></option>
+        	<option value="Minúsculo">Minúsculo</option>
+			<option value="Pequeno">Pequeno</option>
+			<option value="Médio">Médio</option>
+			<option value="Grande">Grande</option>
+			<option value="Enorme">Enorme</option>
+			<option value="Colossal">Colossal</option>
+		</select>
+		<hr>
+		<label>Iniciativa +<span id="iniciativa">0</span>:</label>
+		<label>Percepção +<span id="percepcao">0</span>:</label>
+		<textarea type="text" id="visual" name="visual" placeholder="outras habilidades visuais" rows="1" style="width: 400px;"></textarea>
+		<br>
+		<label>Defesa <span id="defesa">0</span>,</label>
+        <label>Fort +<span id="fort">0</span>,</label>
+        <label>Ref +<span id="ref">0</span>,</label>
+        <label>Von +<span id="von">0</span>,</label>
+        <input type="text" id="defensivo" name="defensivo" placeholder="outros poderes defensivos">
+		<br>
+        <label>Pontos de Vida <span id="pv">0</span></label><br>
+    <input type="text" id="deslocamento" name="deslocamento" placeholder="Deslocamento">
+        <br>
+        <hr>
+		<label>Ataque (+<span id="ataque">0</span>):</label>
+		<label>Dano (<span id="dano">0</span>)</label>
+		<br>
+    <textarea type="text" id="habilidades" name="habilidades" size="65" placeholder="outros poderes da criatura" rows="2" style="width: 400px;"></textarea>
+    <br><label>CD: <span id="classe_dificuldade">0</span></label><br>
+    <hr class="hr-red-bold">
+      <form style="color: red; font-weight: bold;">
+        For: <input type="number" id="for" style="width: 35px;">
+        Des: <input type="number" id="des" style="width: 35px;">
+        Con: <input type="number" id="con" style="width: 35px;">
+        Int: <input type="number" id="int" style="width: 35px;">
+        Sab: <input type="number" id="sab" style="width: 35px;">
+        Car: <input type="number" id="car" style="width: 35px;">
+      </form>
+
+
+    <hr class="hr-red-bold">
+		<textarea type="text" id="pericias" name="pericias" size="85" placeholder="Perícias" rows="2" style="width: 400px;"></textarea><br>
+    <input type="text" id="tesouro" name="tesouro" size="85" placeholder="Tesouro" ><br><br>
+
+	</form>
+    
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" id="add-image">
+    Adicionar Imagem
+    </button><br><br>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Adicionar imagem de <span id="personagem-nome"></span></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="image-url">URL da imagem</label>
+              <input type="text" class="form-control" id="image-url" placeholder="Insira o link da imagem aqui">
+            </div>
+            <div class="form-group">
+              <span id="classe_dificuldade_modal"></span>
+            </div>
+          </form>
+          <div id="image-container"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          <button type="button" class="btn btn-primary" id="load-image">Exibir imagem</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+
+const textarea = document.getElementById('pericias');
+
+textarea.addEventListener('keydown', function(e) {
+  // Verifica se a tecla pressionada foi "Enter" com SHIFT pressionado
+  if (e.shiftKey && e.keyCode === 13) {
+    textarea.value += '\n'; // Insere nova linha no textarea
+  } 
+  // Verifica se a tecla pressionada foi apenas "Enter"
+  else if (e.keyCode === 13) {
+    e.preventDefault(); // Previne quebra de linha no textarea
+    const text = textarea.value;
+    const words = text.split(' '); // Divide o texto em palavras
+    const lastWord = words[words.length - 1]; // Pega a última palavra digitada
+    const newText = text.replace(lastWord, '<b>' + lastWord + '</b>'); // Substitui a palavra pela mesma em negrito
+    textarea.value = newText; // Define o novo valor do textarea
+  }
+});
+
+
+
+let ndSelect = document.getElementById("nd");
+    let nd2Select = document.getElementById("nd2");
+    let iniciativaSpan = document.getElementById("iniciativa");
+    let percepcaoSpan = document.getElementById("percepcao");
+    let ataqueSpan = document.getElementById("ataque");
+    let danoSpan = document.getElementById("dano");
+    let pvSpan = document.getElementById("pv");
+    let defesaSpan = document.getElementById("defesa");
+    let fortSpan = document.getElementById("fort");
+	  let refSpan = document.getElementById("ref");
+    let vonSpan = document.getElementById("von");
+    let classeDificuldadeSpan = document.getElementById("classe_dificuldade");
+
+    ndSelect.addEventListener("change", function() {
+        switch (ndSelect.value) {
+            case "1":
+                switch (nd2Select.value) {
+                    case "Lacaio":
+                        iniciativaSpan.textContent = "4";
+                        percepcaoSpan.textContent = "0";
+                        ataqueSpan.textContent = "7";
+                        danoSpan.textContent = "1d6+3";
+                        pvSpan.textContent = "10";
+                        defesaSpan.textContent = "15";
+                        fortSpan.textContent = "9";
+                        refSpan.textContent = "2";
+                        vonSpan.textContent = "5";
+                        classeDificuldadeSpan.textContent = "14";
+                        break;
+
+                    case "Solo": 
+                        iniciativaSpan.textContent = "15";
+                        percepcaoSpan.textContent = "10";
+                        ataqueSpan.textContent = "15";
+                        danoSpan.textContent = "1d10+10";
+                        pvSpan.textContent = "40";
+                        defesaSpan.textContent = "18";
+                        fortSpan.textContent = "15";
+                        refSpan.textContent = "8";
+                        vonSpan.textContent = "12";
+                        classeDificuldadeSpan.textContent = "17";
+                        break;
+
+                    case "Especial":
+                        iniciativaSpan.textContent = "0";
+                        percepcaoSpan.textContent = "0";
+                        ataqueSpan.textContent = "-";
+                        danoSpan.textContent = "1";
+                        pvSpan.textContent = "1";
+                        defesaSpan.textContent = "-";
+                        fortSpan.textContent = "0";
+                        refSpan.textContent = "0";
+                        vonSpan.textContent = "0";
+                        classeDificuldadeSpan.textContent = "0";
+                        break;    
+
+                    default:
+                        iniciativaSpan.textContent = "";
+                        percepcaoSpan.textContent = "";
+                        ataqueSpan.textContent = "";
+                        danoSpan.textContent = "";
+                        pvSpan.textContent = "";
+                        defesaSpan.textContent = "";
+                        fortSpan.textContent = "";
+                        refSpan.textContent = "";
+                        vonSpan.textContent = "";
+                        classeDificuldadeSpan.textContent = "";
+                        break;
+                }
+                break;
+
+            case "20":
+                switch (nd2Select.value) {
+                    case "Lacaio":
+                        iniciativaSpan.textContent = "45";
+                        percepcaoSpan.textContent = "48";
+                        ataqueSpan.textContent = "45";
+                        danoSpan.textContent = "4d10+42";
+                        pvSpan.textContent = "190";
+                        defesaSpan.textContent = "50";
+                        fortSpan.textContent = "26";
+                        refSpan.textContent = "20";
+                        vonSpan.textContent = "13";
+                        classeDificuldadeSpan.textContent = "46";
+                        break;
+
+                    case "Solo":
+                        iniciativaSpan.textContent = "60";
+                        percepcaoSpan.textContent = "65";
+                        ataqueSpan.textContent = "55, x4";
+                        danoSpan.textContent = "4d12+50";
+                        pvSpan.textContent = "1500";
+                        defesaSpan.textContent = "65";
+                        fortSpan.textContent = "44";
+                        refSpan.textContent = "20";
+                        vonSpan.textContent = "39";
+                        classeDificuldadeSpan.textContent = "50";
+                        break;
+
+                    default:
+                        iniciativaSpan.textContent = "";
+                        percepcaoSpan.textContent = "";
+                        ataqueSpan.textContent = "";
+                        danoSpan.textContent = "";
+                        pvSpan.textContent = "";
+                        defesaSpan.textContent = "";
+                        fortSpan.textContent = "";
+                        refSpan.textContent = "";
+                        vonSpan.textContent = "";
+                        classeDificuldadeSpan.textContent = "";
+                        break;
+                }
+                break;
+
+		}
+      });
+
+  $(document).ready(function() {
+    $('#load-image').click(function() {
+      var imageUrl = $('#image-url').val();
+      var nomePersonagem = $('#nome').val();
+      var cdPersonagem = classeDificuldadeSpan.textContent;
+      var iniciativa = iniciativaSpan.textContent;
+      var ND = ndSelect.value
+      var tipo = nd2Select.value
+      var textoPersonagem = $('#textopersonagem').val();
+      var criaturaTipo = criaturatipo.value;
+      var subtipo = $('#subtipo').val();
+      var criaturaTamanho = tamanho.value;
+      var percepcao = percepcaoSpan.textContent;
+      var visual = $('#visual').val();
+      var poderesDefensivos = $('#defensivo').val();
+      var defesa = defesaSpan.textContent;
+      var fort = fortSpan.textContent;
+      var ref = refSpan.textContent;
+      var von = vonSpan.textContent;
+      var pvs = pvSpan.textContent;
+      var deslocamento = $('#deslocamento').val();
+      var ataque = ataqueSpan.textContent;
+      var dano = danoSpan.textContent;
+      var habilidades = $('#habilidades').val();
+      var forca = $('#for').val();
+      var destreza = $('#des').val();
+      var constituicao = $('#con').val();
+      var inteligencia = $('#int').val();
+      var sabedoria = $('#sab').val();
+      var carisma = $('#car').val();
+      var pericia = $('#pericias').val();
+      var tesouro = $('#tesouro').val();
+
+      if (imageUrl && nomePersonagem && cdPersonagem) {
+       $('#image-container').html('<img src="' + imageUrl + '" class="img-fluid" alt="Imagem"><p style="color: red; font-weight: bold; font-family: Tormenta; font-size: 24px;">' + nomePersonagem + ' ND ' + ND + ' ('+tipo + ')</p><p>' 
+            + textoPersonagem +
+            '</p><p style="font-style: italic;">' + criaturaTipo + ' ' + subtipo + ' ' + criaturaTamanho + 
+            '</p><hr class="hr-red-bold"><p style="color: red; font-weight: bold;">Iniciativa <span style="color: black; font-weight: normal;"> + '+ iniciativa + '</span> Percepção <span style="color: black; font-weight: normal;"> +' + percepcao + ', ' + visual + '</span>' +
+            '</p><p style="color: red; font-weight: bold;">Defesa <span style="color: black; font-weight: normal;">' + defesa + '</span> Fort <span style="color: black; font-weight: normal;">+' + fort + '</span> Ref <span style="color: black; font-weight: normal;">+' + ref + '</span> Von <span style="color: black; font-weight: normal;">+' +  von + ', ' + poderesDefensivos + '</span>' +
+            '</p><p style="color: red; font-weight: bold;">Pontos de Vida <span style="color: black; font-weight: normal;">' + pvs + '</span>' +
+            '</p><p style="color: red; font-weight: bold;">Deslocamento <span style="color: black; font-weight: normal;">' + deslocamento + '</span>' +
+            '</p><hr class="hr-red-bold"><p style="color: red; font-weight: bold;">Ataques <span style="color: black; font-weight: normal;">+' + ataque + '</span>' + ' Dano <span style="color: black; font-weight: normal;">' + dano + '</span>' +
+            '</p><p class="hr-red-bold"><p style="color: red; font-weight: bold;">Habilidades da Criatura ' + 
+            '</p><p">' + habilidades +
+            '</p"><p class="hr-red-bold"><p style="color: red; font-weight: bold;"> CD habilidades: <span style="color: black; font-weight: normal;">' + cdPersonagem + '</span>' + 
+            '</p><hr class="hr-red-bold"><p style="color: red; font-weight: bold; display: flex; justify-content: center;">For ' + forca + ', Des ' + destreza + ', Con ' + constituicao + ', Int ' + inteligencia + ', Sab ' + sabedoria + ', Car ' + carisma + 
+            '</p><hr class="hr-red-bold"><p style="color: red; font-weight: bold;">Perícias: <span style="color: black; font-weight: normal;">' + pericia + '</span></p>' +
+            '</p><hr class="hr-red-bold"><p style="color: red; font-weight: bold;">Tesouro: <span style="color: black; font-weight: normal;">' + tesouro + '</span></p>');
+
+      }
+    });
+    
+    $('#adicionar-imagem').click(function() {
+      var nomePersonagem = $('#nome').val();
+      var textoPersonagem = $('#textopersonagem').val();
+      var habilidadesVisuais = $('#visual').val();
+      var poderesDefensivos = $('#defensivo').val();
+      var subtipoPersonagem = $('#subtipo').val();
+      var deslocamentoPersonagem = $('#deslocamento').val();
+      var habilidadesCriatura = $('#habilidades').val();
+      var ForCriatura = $('#for').val();
+      var DesCriatura = $('#des').val();
+      var ConCriatura = $('#con').val();
+      var IntCriatura = $('#int').val();
+      var SabCriatura = $('#sab').val();
+      var CarCriatura = $('#car').val();
+      var PericiasCriatura = $('#pericias').val();
+      var TesouroCriatura = $('#tesouro').val();
+      if (nomePersonagem) {
+        $('#nome-personagem').val(nomePersonagem);
+        $('#textopersonagem-personagem').val(textoPersonagem);
+        $('#subtipoPersonagem-personagem').val(subtipoPersonagem);
+        $('#visual-personagem').val(habilidadesVisuais);
+        $('#defensivo-personagem').val(poderesDefensivos);
+        $('#deslocamento-personagem').val(deslocamentoPersonagem);
+        $('#habilidades-personagem').val(habilidadesCriatura);
+        $('#for-personagem').val(ForCriatura);
+        $('#des-personagem').val(DesCriatura);
+        $('#con-personagem').val(ConCriatura);
+        $('#int-personagem').val(IntCriatura);
+        $('#sab-personagem').val(SabCriatura);
+        $('#car-personagem').val(CarCriatura);
+        $('#pericias-personagem').val(PericiasCriatura);
+        $('#tesouro-personagem').val(TesouroCriatura);
+      }
+    });
+  });
+</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>
+                   
