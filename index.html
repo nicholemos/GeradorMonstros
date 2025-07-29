@@ -1,481 +1,238 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-  <title>Gerador de Mobs</title>
+  <title>Gerador de Ameaças T20</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
  <style>
-  #image-container img {
-    max-width: 100%;
-    max-height: 300px;
-}
-  @font-face {
-  font-family: 'Tormenta';
-  src: url('Tormenta.ttf') format('truetype');
-}
-hr {
-  border-top: 3px solid red;
-  font-weight: bold;
-}
-
-.modal-content {
-  padding: 5px;
-}
-
-.modal-header, .modal-body, .modal-footer {
-  padding: 5px;
-}
-
- .dados-caixa {
-            display: inline-block;
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-right: 10px;
-            margin-bottom: 10px;
-            background-color: #f0f0f0;
-            word-wrap: break-word;
-        }
-
-        .negrito {
-            font-weight: bold;
-            color: red;
-        }
-#exibicaoVisual {
-  display: inline-block;
-  width: 400px;
-  flex-wrap: wrap;
-
-}
-
-.linha {
-    display: flex;
-    align-items: center;
-  }
-
-</style> 
- 
+  body { background-color: #f4f4f4; }
+  .container { background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+  @font-face { font-family: 'Tormenta'; src: url('Tormenta.ttf') format('truetype'); }
+  h2, h5 { font-family: 'Tormenta', sans-serif; color: #9d1e1e; }
+  hr { border-top: 2px solid #9d1e1e; }
+  .step-header { background-color: #9d1e1e; color: white; padding: 8px; margin-top: 15px; border-radius: 4px; }
+  .form-group label { font-weight: bold; }
+  .linha { display: flex; align-items: center; flex-wrap: wrap; gap: 15px; }
+  .sugestao-dano { font-style: italic; color: #555; font-size: 0.9em; margin-left: 5px;}
+  #ficha-final-container { border: 2px solid #9d1e1e; padding: 15px; border-radius: 5px; background-color: #fff8f8; }
+ </style> 
 </head>
 <body>
 <div class="container">
-  <h2 style="color: red; font-weight: bold; font-family: Tormenta; font-size: 48px;">Gerador de Mobs</h2>
+  <h2 class="text-center">Gerador de Ameaças T20</h2>
+  <p class="text-center text-muted">Use o Gerador Rápido para inspiração ou preencha os passos para criar sua ameaça do zero.</p>
   
-  <form>
-		<label for="nome">Nome: </label>
-		<input type="text" id="nome" name="nome" value="">
-		<label for="nd">ND: </label>
-        <select id="nd" name="nd">
-            <option value="">Selecione um ND</option>
-            <option value="1">ND 1</option>
-            <option value="20">ND 20</option>
-        </select>
-        <label for="nd2">Tipo: </label>
-          <select id="nd2" name="nd2">
-            <option value="Solo">Solo</option>
-            <option value="Lacaio">Lacaio</option>
-            <option value="Especial">Especial</option>
-          </select><br><br>
-          
-    <h5>Modelos</h5>
-    <input type="checkbox" id="bando" name="bando" value="bando" onchange="verificarBando(); atualizarFrase()">
-    <label for="bando">Bando / Turba</label>
-
-    <br>
-    <div id="resultado"></div>
-		<hr>
-		<textarea type="text" id="textopersonagem" name="textopersonagem" size="65" placeholder="insira a descrição da criatura" rows="2" style="width: 400px;"></textarea>
-		<br>
-		<select id="criaturatipo" name="criaturatipo">
-        	<option value="default"></option>
-			<option value="Humanoide">Humanoide</option>
-			<option value="Animal">Animal</option>
-			<option value="Monstro">Monstro</option>
-			<option value="Morto-Vivo">Morto-vivo</option>
-			<option value="Construto">Construto</option>
-			<option value="Espirito">Espírito</option>
-		</select>
-		<input type="text" id="subtipo" name="subtipo" value="" rows="2" style="width: 150px;">
-		<select id="tamanho" name="tamanho">
-			<option value="default"></option>
-        	<option value="Minúsculo">Minúsculo</option>
-			<option value="Pequeno">Pequeno</option>
-			<option value="Médio">Médio</option>
-			<option value="Grande">Grande</option>
-			<option value="Enorme">Enorme</option>
-			<option value="Colossal">Colossal</option>
-		</select>
-		<hr>
-		<label>Iniciativa +<span id="iniciativa" tipe="text" >0</span>:</label>
-		<label>Percepção +<span id="percepcao">0</span>:</label>
-		<input type="text" id="visual" name="visual" placeholder="outras habildades visuais">
-
-		<br>
-		<label>Defesa <span id="defesa">0</span>,</label>
-        <label>Fort +<span id="fort">0</span>,</label>
-        <label>Ref +<span id="ref">0</span>,</label>
-        <label>Von +<span id="von">0</span>,</label>
-        <input type="text" id="defensivo" name="defensivo" placeholder="outros poderes defensivos">
-		<br>
-        <label>Pontos de Vida <span id="pv">0</span></label><br>
-    <input type="text" id="deslocamento" name="deslocamento" placeholder="Deslocamento">
-        <br>
-        <hr>
-		<div class="linha">
-      <label>Ataque (+<span id="ataque">0</span>):</label>
-      <label>Dano (<span id="dano">0</span>)</label>
-      <div id="frase"></div>
+  <div class="card bg-light my-4">
+    <div class="card-body">
+        <h5 class="card-title">Gerador Rápido de Ameaça</h5>
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                <label for="quick-nd">Nível de Desafio (ND)</label>
+                <select id="quick-nd" class="form-control">
+                     <script>for(let i=1; i<=20; i++) document.write(`<option value="${i}">ND ${i}</option>`);</script>
+                </select>
+            </div>
+            <div class="form-group col-md-5">
+                 <label for="quick-papel">Papel da Ameaça</label>
+                <select id="quick-papel" class="form-control">
+                    <option value="Lacaio">Lacaio</option>
+                    <option value="Solo" selected>Solo</option>
+                    <option value="Especial">Especial</option>
+                </select>
+            </div>
+            <div class="form-group col-md-2 d-flex align-items-end">
+                <button type="button" class="btn btn-success btn-block" id="generate-random">Gerar!</button>
+            </div>
+        </div>
     </div>
-		<br>
-    <textarea type="text" id="habilidades" name="habilidades" size="65" placeholder="outros poderes da criatura" rows="2" style="width: 400px;"></textarea>
-    <br><label>CD: <span id="classe_dificuldade">0</span></label><br>
-    <hr class="hr-red-bold">
-      <form style="color: red; font-weight: bold;">
-        For: <input type="number" id="for" style="width: 35px;">
-        Des: <input type="number" id="des" style="width: 35px;">
-        Con: <input type="number" id="con" style="width: 35px;">
-        Int: <input type="number" id="int" style="width: 35px;">
-        Sab: <input type="number" id="sab" style="width: 35px;">
-        Car: <input type="number" id="car" style="width: 35px;">
-      </form>
+  </div>
 
 
-    <hr class="hr-red-bold">
-		<textarea type="text" id="pericias" name="pericias" size="85" placeholder="Perícias" rows="2" style="width: 400px;"></textarea><br>
-    <input type="text" id="tesouro" name="tesouro" size="85" placeholder="Tesouro" ><br><br>
+  <form id="gerador-form">
+    <div class="step-header"><h5>Passo 0: Conceito</h5></div>
+    <div class="form-group mt-2">
+        <label for="nome">Nome da Ameaça:</label>
+        <input type="text" id="nome" name="nome" class="form-control" placeholder="Ex: Orc Batedor">
+    </div>
+    <div class="form-group">
+        <label for="textopersonagem">Descrição e Comportamento:</label>
+		<textarea id="textopersonagem" name="textopersonagem" class="form-control" rows="3" placeholder="Descreva a aparência, história e como a ameaça age em combate e fora dele."></textarea>
+    </div>
 
-	</form>
+    <div class="step-header"><h5>Passo 1: Tipo, Tamanho e Papel</h5></div>
+    <div class="form-row mt-2">
+        <div class="form-group col-md-4">
+            <label for="criaturatipo">Tipo</label>
+            <select id="criaturatipo" name="criaturatipo" class="form-control">
+                <option value="Animal">Animal</option>
+                <option value="Construto">Construto</option>
+                <option value="Espírito">Espírito</option>
+                <option value="Humanoide">Humanoide</option>
+                <option value="Monstro">Monstro</option>
+                <option value="Morto-Vivo">Morto-Vivo</option>
+            </select>
+        </div>
+        <div class="form-group col-md-4">
+            <label for="tamanho">Tamanho</label>
+            <select id="tamanho" name="tamanho" class="form-control">
+                <option value="Pequeno">Pequeno (ou menor)</option>
+                <option value="Médio" selected>Médio</option>
+                <option value="Grande">Grande (ou maior)</option>
+            </select>
+        </div>
+        <div class="form-group col-md-4">
+            <label for="subtipo">Subtipo (Opcional)</label>
+            <input type="text" id="subtipo" name="subtipo" class="form-control" placeholder="Ex: Elfo, Fogo">
+        </div>
+    </div>
+    <div class="step-header"><h5>Passo 2: Nível de Desafio</h5></div>
+     <div class="form-row mt-2">
+        <div class="form-group col-md-6">
+            <label for="nd">ND da Criatura-Base</label>
+            <select id="nd" name="nd" class="form-control">
+                <option value="">Selecione um ND</option>
+                <script>for(let i=1; i<=20; i++) document.write(`<option value="${i}">ND ${i}</option>`);</script>
+            </select>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="nd2">Papel da Ameaça</label>
+            <select id="nd2" name="nd2" class="form-control">
+                <option value="Lacaio">Lacaio</option>
+                <option value="Solo" selected>Solo</option>
+                <option value="Especial">Especial</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="bando-mod">Modificador de Bando</label>
+         <select id="bando-mod" class="form-control">
+            <option value="0">Nenhum (Criatura Individual)</option>
+            <option value="2">+2 ND (Bando Padrão, 6-11 criaturas)</option>
+            <option value="4">+4 ND (Bando Grande, 12-17 criaturas)</option>
+            <option value="6">+6 ND (Bando Enorme, 18+ criaturas)</option>
+        </select>
+        <div id="resultado" class="font-weight-bold mt-2"></div>
+    </div>
+    <div class="step-header"><h5>Passo 3: Estatísticas de Combate</h5></div>
+    <div class="linha mt-2">
+        <div><label>Defesa:</label> <span id="defesa" class="badge badge-secondary p-2">0</span></div>
+        <div><label>Pontos de Vida:</label> <span id="pv" class="badge badge-danger p-2">0</span></div>
+    </div>
+    <div class="linha mt-2">
+        <div><label>Res. Forte:</label> +<span id="forte">0</span></div>
+        <div><label>Res. Média:</label> +<span id="media">0</span></div>
+        <div><label>Res. Fraca:</label> +<span id="fraca">0</span></div>
+    </div>
+    <div class="form-group mt-2">
+        <label for="defensivo">Habilidades Defensivas e Imunidades:</label>
+        <input type="text" id="defensivo" name="defensivo" class="form-control" placeholder="Ex: Cura Acelerada, Imunidade a Fogo">
+    </div>
+    <div class="step-header"><h5>Passo 4: Ataques</h5></div>
+    <div class="linha mt-2">
+        <div><label>Bônus de Ataque:</label> +<span id="ataque">0</span></div>
+        <div><label>Dano Médio Total:</label> <span id="dano">0</span> <span id="sugestao-dano" class="sugestao-dano"></span></div>
+    </div>
+     <div class="form-group mt-2">
+        <label for="habilidades-ataque">Descrição dos Ataques:</label>
+        <textarea id="habilidades-ataque" name="habilidades-ataque" class="form-control" rows="3" placeholder="Ex: Mordida (1d8+5 perfuração), 2 Garras (1d6+5 corte)"></textarea>
+    </div>
+    <div class="step-header"><h5>Passo 5: Habilidades</h5></div>
+     <div class="linha mt-2">
+        <div><label>CD das Habilidades:</label> <span id="classe_dificuldade" class="badge badge-info p-2">0</span></div>
+        <div><label>Pontos de Mana (PM):</label> <span id="pm" class="badge badge-primary p-2">0</span></div>
+    </div>
+    <div class="form-group mt-2">
+        <label for="habilidades">Outras Habilidades e Magias:</label>
+        <textarea id="habilidades" name="habilidades" class="form-control" rows="3" placeholder="Ex: Agarrar Aprimorado, Magias (Bola de Fogo, Seta de Gelo)"></textarea>
+    </div>
+    <div class="step-header"><h5>Passo 6: Estatísticas Secundárias</h5></div>
+    <div class="linha mt-2">
+        <div><label>Iniciativa:</label> +<span id="iniciativa">0</span></div>
+        <div><label>Percepção:</label> +<span id="percepcao">0</span></div>
+    </div>
+    <div class="form-row mt-2">
+        <div class="form-group col-md-4">
+            <label for="locomocao-tipo">Tipo de Deslocamento</label>
+            <select id="locomocao-tipo" class="form-control">
+                <option value="Bípede">Bípede</option>
+                <option value="Quadrúpede">Quadrúpede</option>
+                <option value="Voador">Voador</option>
+                <option value="Escalador">Escalador</option>
+                <option value="Nadador">Nadador</option>
+            </select>
+        </div>
+        <div class="form-group col-md-4">
+             <label for="locomocao-velocidade">Velocidade</label>
+            <select id="locomocao-velocidade" class="form-control">
+                <option value="Lento">Lento</option>
+                <option value="Normal" selected>Normal</option>
+                <option value="Rápido">Rápido</option>
+            </select>
+        </div>
+        <div class="form-group col-md-4">
+            <label for="deslocamento">Deslocamento</label>
+            <input type="text" id="deslocamento" class="form-control" readonly>
+        </div>
+    </div>
+    <p class="font-weight-bold">Atributos:</p>
+    <div class="form-row">
+        <div class="form-group col-md-2"><label>For</label><select id="for" class="form-control"></select></div>
+        <div class="form-group col-md-2"><label>Des</label><select id="des" class="form-control"></select></div>
+        <div class="form-group col-md-2"><label>Con</label><select id="con" class="form-control"></select></div>
+        <div class="form-group col-md-2"><label>Int</label><select id="int" class="form-control"></select></div>
+        <div class="form-group col-md-2"><label>Sab</label><select id="sab" class="form-control"></select></div>
+        <div class="form-group col-md-2"><label>Car</label><select id="car" class="form-control"></select></div>
+    </div>
+     <div class="form-group mt-2">
+        <label for="pericias">Outras Perícias:</label>
+        <textarea id="pericias" class="form-control" rows="2" placeholder="Ex: Atletismo +10, Furtividade +15, Guerra +8"></textarea>
+    </div>
+    <div class="step-header"><h5>Passo 7: Equipamento e Tesouro</h5></div>
+    <div class="form-group mt-2">
+        <label for="tesouro">Tesouro</label>
+        <input type="text" id="tesouro" name="tesouro" class="form-control" placeholder="Padrão, Dobro, Metade, Itens específicos..." >
+    </div>
+  </form>
     
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" id="add-image">
-      Adicionar Imagem
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+      Gerar Ficha com Imagem
+    </button>
+     <button type="button" class="btn btn-danger" id="clear-state">
+      Limpar e Recomeçar
     </button>
     <br><br>
 
-<!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Adicionar imagem de <span id="personagem-nome"></span></h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <h5 class="modal-title" id="exampleModalLabel">Ficha da Ameaça</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"> <span aria-hidden="true">&times;</span> </button>
         </div>
         <div class="modal-body">
-          <form>
             <div class="form-group">
-              <label for="image-url">URL da imagem</label>
+              <label for="image-url">URL da imagem (Opcional)</label>
               <input type="text" class="form-control" id="image-url" placeholder="Insira o link da imagem aqui">
             </div>
-            <div class="form-group">
-              <span id="classe_dificuldade_modal"></span>
-            </div>
-          </form>
-          <div id="image-container"></div>
+          <hr>
+          <div id="ficha-final-container">
+            <div id="image-container" class="mt-3"></div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-          <button type="button" class="btn btn-primary" id="load-image">Exibir imagem</button>
+          <button type="button" class="btn btn-success" id="load-image">Gerar/Atualizar Ficha</button>
+          <button type="button" class="btn btn-info" id="download-ficha">Baixar Ficha como Imagem</button>
         </div>
       </div>
     </div>
   </div>
 
-<script>
-
-const textarea = document.getElementById('pericias');
-
-textarea.addEventListener('keydown', function(e) {
-  // Verifica se a tecla pressionada foi "Enter" com SHIFT pressionado
-  if (e.shiftKey && e.keyCode === 13) {
-    textarea.value += '\n'; // Insere nova linha no textarea
-  } 
-  // Verifica se a tecla pressionada foi apenas "Enter"
-  else if (e.keyCode === 13) {
-    e.preventDefault(); // Previne quebra de linha no textarea
-    const text = textarea.value;
-    const words = text.split(' '); // Divide o texto em palavras
-    const lastWord = words[words.length - 1]; // Pega a última palavra digitada
-    const newText = text.replace(lastWord, '<b>' + lastWord + '</b>'); // Substitui a palavra pela mesma em negrito
-    textarea.value = newText; // Define o novo valor do textarea
-  }
-});
-
-
-
-let ndSelect = document.getElementById("nd");
-    let nd2Select = document.getElementById("nd2");
-    let iniciativaSpan = document.getElementById("iniciativa");
-    let percepcaoSpan = document.getElementById("percepcao");
-    let ataqueSpan = document.getElementById("ataque");
-    let danoSpan = document.getElementById("dano");
-    let pvSpan = document.getElementById("pv");
-    let defesaSpan = document.getElementById("defesa");
-    let fortSpan = document.getElementById("fort");
-	  let refSpan = document.getElementById("ref");
-    let vonSpan = document.getElementById("von");
-    let classeDificuldadeSpan = document.getElementById("classe_dificuldade");
-
-    ndSelect.addEventListener("change", function() {
-        switch (ndSelect.value) {
-            case "1":
-                switch (nd2Select.value) {
-                    case "Lacaio":
-                        iniciativaSpan.textContent = "4";
-                        percepcaoSpan.textContent = "0";
-                        ataqueSpan.textContent = "7";
-                        danoSpan.textContent = "1d6+3";
-                        pvSpan.textContent = "10";
-                        defesaSpan.textContent = "15";
-                        fortSpan.textContent = "9";
-                        refSpan.textContent = "2";
-                        vonSpan.textContent = "5";
-                        classeDificuldadeSpan.textContent = "14";
-                        break;
-
-                    case "Solo": 
-                        iniciativaSpan.textContent = "15";
-                        percepcaoSpan.textContent = "10";
-                        ataqueSpan.textContent = "15";
-                        danoSpan.textContent = "1d10+10";
-                        pvSpan.textContent = "40";
-                        defesaSpan.textContent = "18";
-                        fortSpan.textContent = "15";
-                        refSpan.textContent = "8";
-                        vonSpan.textContent = "12";
-                        classeDificuldadeSpan.textContent = "17";
-                        break;
-
-                    case "Especial":
-                        iniciativaSpan.textContent = "0";
-                        percepcaoSpan.textContent = "0";
-                        ataqueSpan.textContent = "-";
-                        danoSpan.textContent = "1";
-                        pvSpan.textContent = "1";
-                        defesaSpan.textContent = "-";
-                        fortSpan.textContent = "0";
-                        refSpan.textContent = "0";
-                        vonSpan.textContent = "0";
-                        classeDificuldadeSpan.textContent = "0";
-                        break;    
-
-                    default:
-                        iniciativaSpan.textContent = "";
-                        percepcaoSpan.textContent = "";
-                        ataqueSpan.textContent = "";
-                        danoSpan.textContent = "";
-                        pvSpan.textContent = "";
-                        defesaSpan.textContent = "";
-                        fortSpan.textContent = "";
-                        refSpan.textContent = "";
-                        vonSpan.textContent = "";
-                        classeDificuldadeSpan.textContent = "";
-                        break;
-                }
-                break;
-
-            case "20":
-                switch (nd2Select.value) {
-                    case "Lacaio":
-                        iniciativaSpan.textContent = "45";
-                        percepcaoSpan.textContent = "48";
-                        ataqueSpan.textContent = "45";
-                        danoSpan.textContent = "4d10+42";
-                        pvSpan.textContent = "190";
-                        defesaSpan.textContent = "50";
-                        fortSpan.textContent = "26";
-                        refSpan.textContent = "20";
-                        vonSpan.textContent = "13";
-                        classeDificuldadeSpan.textContent = "46";
-                        break;
-
-                    case "Solo":
-                        iniciativaSpan.textContent = "60";
-                        percepcaoSpan.textContent = "65";
-                        ataqueSpan.textContent = "55";
-                        danoSpan.textContent = "4d12+50 x3";
-                        pvSpan.textContent = "1500";
-                        defesaSpan.textContent = "65";
-                        fortSpan.textContent = "44";
-                        refSpan.textContent = "20";
-                        vonSpan.textContent = "39";
-                        classeDificuldadeSpan.textContent = "50";
-                        break;
-
-                    default:
-                        iniciativaSpan.textContent = "";
-                        percepcaoSpan.textContent = "";
-                        ataqueSpan.textContent = "";
-                        danoSpan.textContent = "";
-                        pvSpan.textContent = "";
-                        defesaSpan.textContent = "";
-                        fortSpan.textContent = "";
-                        refSpan.textContent = "";
-                        vonSpan.textContent = "";
-                        classeDificuldadeSpan.textContent = "";
-                        break;
-                }
-                break;
-
-		}
-      });
-
-  $(document).ready(function() {
-    $('#load-image').click(function() {
-      var imageUrl = $('#image-url').val();
-      var nomePersonagem = $('#nome').val();
-      var cdPersonagem = classeDificuldadeSpan.textContent;
-      var ND = resultado.textContent;
-      var iniciativa = iniciativaSpan.textContent;
-      var tipo = nd2Select.value
-      var textoPersonagem = $('#textopersonagem').val();
-      var criaturaTipo = criaturatipo.value;
-      var subtipo = $('#subtipo').val();
-      var criaturaTamanho = tamanho.value;
-      var percepcao = percepcaoSpan.textContent;
-      var visual = $('#visual').val();
-      var poderesDefensivos = $('#defensivo').val();
-      var defesa = defesaSpan.textContent;
-      var fort = fortSpan.textContent;
-      var ref = refSpan.textContent;
-      var von = vonSpan.textContent;
-      var pvs = pvSpan.textContent;
-      var deslocamento = $('#deslocamento').val();
-      var ataque = ataqueSpan.textContent;
-      var dano = danoSpan.textContent;
-      var habilidades = $('#habilidades').val();
-      var forca = $('#for').val();
-      var destreza = $('#des').val();
-      var constituicao = $('#con').val();
-      var inteligencia = $('#int').val();
-      var sabedoria = $('#sab').val();
-      var carisma = $('#car').val();
-      var pericia = $('#pericias').val();
-      var tesouro = $('#tesouro').val();
-
-      if (imageUrl && nomePersonagem && cdPersonagem) {
-       $('#image-container').html('<span style="color: red; font-weight: bold; font-family: Tormenta; font-size: 24px;">' + nomePersonagem +' '+ ND + ' ('+tipo + ')</span><p>' + '<img src="' + imageUrl + '" class="img-fluid" alt="Imagem"></p>'  
-            + textoPersonagem +
-            '</p><p style="font-style: italic;">' + criaturaTipo + ' ' + subtipo + ' ' + criaturaTamanho + 
-            '</p><hr class="hr-red-bold"><p style="color: red; font-weight: bold;">Iniciativa <span style="color: black; font-weight: normal;"> + '+ iniciativa + '</span> Percepção <span style="color: black; font-weight: normal;"> +' + percepcao + ', ' + visual + '</span>' +
-            '</p><p style="color: red; font-weight: bold;">Defesa <span style="color: black; font-weight: normal;">' + defesa + '</span> Fort <span style="color: black; font-weight: normal;">+' + fort + '</span> Ref <span style="color: black; font-weight: normal;">+' + ref + '</span> Von <span style="color: black; font-weight: normal;">+' +  von + ', ' + poderesDefensivos + '</span>' +
-            '</p><p style="color: red; font-weight: bold;">Pontos de Vida <span style="color: black; font-weight: normal;">' + pvs + '</span>' +
-            '</p><p style="color: red; font-weight: bold;">Deslocamento <span style="color: black; font-weight: normal;">' + deslocamento + '</span>' +
-            '</p><hr class="hr-red-bold"><p style="color: red; font-weight: bold;">Ataques <span style="color: black; font-weight: normal;">+' + ataque + '</span>' + ' Dano <span style="color: black; font-weight: normal;">' + dano + '</span>' +
-            '</p><p class="hr-red-bold"><p style="color: red; font-weight: bold;">Habilidades da Criatura ' + 
-            '</p><p">' + habilidades +
-            '</p"><p class="hr-red-bold"><p style="color: red; font-weight: bold;"> CD habilidades: <span style="color: black; font-weight: normal;">' + cdPersonagem + '</span>' + 
-            '</p><hr class="hr-red-bold"><p style="color: red; font-weight: bold; display: flex; justify-content: center;">For ' + forca + ', Des ' + destreza + ', Con ' + constituicao + ', Int ' + inteligencia + ', Sab ' + sabedoria + ', Car ' + carisma + 
-            '</p><hr class="hr-red-bold"><p style="color: red; font-weight: bold;">Perícias: <span style="color: black; font-weight: normal;">' + pericia + '</span></p>' +
-            '</p><hr class="hr-red-bold"><p style="color: red; font-weight: bold;">Tesouro: <span style="color: black; font-weight: normal;">' + tesouro + '</span></p>');
-
-      }
-    });
-    
-    $('#adicionar-imagem').click(function() {
-      var nomePersonagem = $('#nome').val();
-      var textoPersonagem = $('#textopersonagem').val();
-      var habilidadesVisuais = $('#visual').val();
-      var poderesDefensivos = $('#defensivo').val();
-      var subtipoPersonagem = $('#subtipo').val();
-      var deslocamentoPersonagem = $('#deslocamento').val();
-      var habilidadesCriatura = $('#habilidades').val();
-      var ForCriatura = $('#for').val();
-      var DesCriatura = $('#des').val();
-      var ConCriatura = $('#con').val();
-      var IntCriatura = $('#int').val();
-      var SabCriatura = $('#sab').val();
-      var CarCriatura = $('#car').val();
-      var PericiasCriatura = $('#pericias').val();
-      var TesouroCriatura = $('#tesouro').val();
-
-      if (nomePersonagem) {
-        $('#nome-personagem').val(nomePersonagem);
-        $('#textopersonagem-personagem').val(textoPersonagem);
-        $('#subtipoPersonagem-personagem').val(subtipoPersonagem);
-        $('#visual-personagem').val(habilidadesVisuais);
-        $('#defensivo-personagem').val(poderesDefensivos);
-        $('#deslocamento-personagem').val(deslocamentoPersonagem);
-        $('#habilidades-personagem').val(habilidadesCriatura);
-        $('#for-personagem').val(ForCriatura);
-        $('#des-personagem').val(DesCriatura);
-        $('#con-personagem').val(ConCriatura);
-        $('#int-personagem').val(IntCriatura);
-        $('#sab-personagem').val(SabCriatura);
-        $('#car-personagem').val(CarCriatura);
-        $('#pericias-personagem').val(PericiasCriatura);
-        $('#tesouro-personagem').val(TesouroCriatura);
-      }
-    });
-  });
-
-
-var bandoSelecionado = document.getElementById("bando").checked;
-var NDFinal = bandoSelecionado ? parseInt(ndSelect.value) + 4 : parseInt(ndSelect.value);
-
-ndSelect.addEventListener("change", function() {
-  NDFinal = parseInt(ndSelect.value);
-  document.getElementById("resultado").innerHTML = "ND " + NDFinal;
-  
-  // Remover marcação do checkbox "bando" se existir
-  var bandoCheckbox = document.getElementById("bando");
-  if (bandoCheckbox.checked) {
-    bandoCheckbox.checked = false;
-  }
-});
-
-function verificarBando() {
-  
-  var bandoSelecionado = document.getElementById("bando").checked;
-
-  // Atualiza o resultado
-  document.getElementById("resultado").innerHTML = "ND " + (bandoSelecionado ? NDFinal + 4 : NDFinal);
-
-  // Verifica se a caixa de seleção "bando" está marcada
-  if (bandoSelecionado) {
-    pvSpan.textContent *= 5;
-    iniciativaSpan.textContent = parseInt(iniciativaSpan.textContent) + 2;
-    percepcaoSpan.textContent = parseInt(percepcaoSpan.textContent) + 2;
-    fortSpan.textContent = parseInt(fortSpan.textContent) + 2;
-    refSpan.textContent = parseInt(refSpan.textContent) + 2;
-    vonSpan.textContent = parseInt(vonSpan.textContent) + 2;
-    ataqueSpan.textContent = parseInt(ataqueSpan.textContent) + 10;
-    classeDificuldadeSpan.textContent = parseInt(classeDificuldadeSpan.textContent) + 2;
-  } else {
-    pvSpan.textContent /= 5;
-    iniciativaSpan.textContent = parseInt(iniciativaSpan.textContent) - 2;
-    percepcaoSpan.textContent = parseInt(percepcaoSpan.textContent) - 2;
-    fortSpan.textContent = parseInt(fortSpan.textContent) - 2;
-    refSpan.textContent = parseInt(refSpan.textContent) - 2;
-    vonSpan.textContent = parseInt(vonSpan.textContent) - 2;
-    ataqueSpan.textContent = parseInt(ataqueSpan.textContent) - 10;
-    classeDificuldadeSpan.textContent = parseInt(classeDificuldadeSpan.textContent) - 2;
-  }
-}
-
-
-function atualizarFrase() {
-    var checkbox = document.getElementById("bando");
-    var fraseDiv = document.getElementById("frase");
-
-    if (checkbox.checked) {
-      fraseDiv.innerText = "(Dobre o dano no caso de bando)";
-    } else {
-      fraseDiv.innerText = "";
-    }
-  }
-
-  document.addEventListener("DOMContentLoaded", function() {
-  var resultadoElement = document.getElementById("resultado");
-  resultadoElement.innerHTML = "ND ";
-  
-  
-});
-
-</script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
-  </body>
+  <script src="back.js"></script>
+</body>
 </html>
-                   
